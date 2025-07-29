@@ -29,22 +29,22 @@ restecg = st.selectbox("Resting ECG Results", [0, 1, 2])
 ca = st.selectbox("Number of Major Vessels (0–3)", [0, 1, 2, 3])
 thal = st.selectbox("Thalassemia Type", [1, 2, 3])
 
-# Create feature vector in same order
+# Create feature vector
 input_data = np.array([[age, sex, systolic_bp, diastolic_bp, chol, fbs, cp, exang,
                         thalachh, oldpeak, slope, restecg, ca, thal]])
 
-# Prediction
+# Predict
 if st.button("Predict Heart Attack Risk"):
-    # Scale input
     input_scaled = scaler.transform(input_data)
-    probabilities = model.predict_proba(input_scaled)[0]  # probabilities for [No Heart Attack, Heart Attack]
-    prediction = model.predict(input_scaled)[0]
+    probabilities = model.predict_proba(input_scaled)[0]
     
-    # Show full probabilities for debugging
+    # Show both class probabilities
     st.write(f"Prediction Probabilities: No Heart Attack = {probabilities[0]:.2f}, Heart Attack = {probabilities[1]:.2f}")
 
-    # Output
-    if prediction == 1:
+    # Adjust threshold for better medical sensitivity
+    threshold = 0.25  # lowered from default 0.50
+
+    if probabilities[1] >= threshold:
         st.error(f"⚠️ High Risk of Heart Attack\n🔢 Probability: {probabilities[1]:.2f}")
     else:
         st.success(f"✅ Low Risk of Heart Attack\n🔢 Probability: {probabilities[1]:.2f}")
