@@ -37,11 +37,14 @@ input_data = np.array([[age, sex, systolic_bp, diastolic_bp, chol, fbs, cp, exan
 if st.button("Predict Heart Attack Risk"):
     # Scale input
     input_scaled = scaler.transform(input_data)
+    probabilities = model.predict_proba(input_scaled)[0]  # probabilities for [No Heart Attack, Heart Attack]
     prediction = model.predict(input_scaled)[0]
-    probability = model.predict_proba(input_scaled)[0][1]
+    
+    # Show full probabilities for debugging
+    st.write(f"Prediction Probabilities: No Heart Attack = {probabilities[0]:.2f}, Heart Attack = {probabilities[1]:.2f}")
 
     # Output
     if prediction == 1:
-        st.error(f"⚠️ High Risk of Heart Attack\n🔢 Probability: {probability:.2f}")
+        st.error(f"⚠️ High Risk of Heart Attack\n🔢 Probability: {probabilities[1]:.2f}")
     else:
-        st.success(f"✅ Low Risk of Heart Attack\n🔢 Probability: {probability:.2f}")
+        st.success(f"✅ Low Risk of Heart Attack\n🔢 Probability: {probabilities[1]:.2f}")
